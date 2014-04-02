@@ -1303,7 +1303,7 @@ panel_compute_totals (const WPanel * panel, dirsize_status_msg_t * sm, size_t * 
             FileProgressStatus status;
 
             p = vfs_path_append_new (panel->cwd_vpath, panel->dir.list[i].fname, NULL);
-            status = compute_dir_size (p, sm, &dir_count, ret_count, &ret_total, compute_symlinks);
+            status = compute_dir_size (p, sm, &dir_count, ret_count, ret_total, compute_symlinks);
             vfs_path_free (p);
 
             if (status != FILE_CONT)
@@ -2568,6 +2568,7 @@ dirsize_status_deinit_cb (status_msg_t * sm)
  * Computes the number of bytes used by the files in a directory
  */
 
+FileProgressStatus
 compute_dir_size (const vfs_path_t * dirname_vpath, dirsize_status_msg_t * sm,
                   size_t * ret_dir_count, size_t * ret_marked_count, uintmax_t * ret_total,
                   gboolean compute_symlinks)
