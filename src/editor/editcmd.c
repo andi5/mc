@@ -2896,7 +2896,7 @@ edit_copy_to_X_buf_cmd (WEdit * edit)
         return FALSE;
     }
     /* try use external clipboard utility */
-    mc_event_raise (MCEVENT_GROUP_CORE, "clipboard_file_to_ext_clip", NULL);
+    mc_event_raise (MCEVENT_GROUP_CORE, "clipboard_file_to_ext_clip", NULL, NULL);
 
     if (option_drop_selection_on_copy)
         edit_mark_cmd (edit, TRUE);
@@ -2920,7 +2920,7 @@ edit_cut_to_X_buf_cmd (WEdit * edit)
         return FALSE;
     }
     /* try use external clipboard utility */
-    mc_event_raise (MCEVENT_GROUP_CORE, "clipboard_file_to_ext_clip", NULL);
+    mc_event_raise (MCEVENT_GROUP_CORE, "clipboard_file_to_ext_clip", NULL, NULL);
 
     edit_block_delete_cmd (edit);
     edit_mark_cmd (edit, TRUE);
@@ -2937,7 +2937,7 @@ edit_paste_from_X_buf_cmd (WEdit * edit)
     gboolean ret;
 
     /* try use external clipboard utility */
-    mc_event_raise (MCEVENT_GROUP_CORE, "clipboard_file_from_ext_clip", NULL);
+    mc_event_raise (MCEVENT_GROUP_CORE, "clipboard_file_from_ext_clip", NULL, NULL);
     tmp = mc_config_get_full_vpath (EDIT_CLIP_FILE);
     ret = (edit_insert_file (edit, tmp) >= 0);
     vfs_path_free (tmp);
