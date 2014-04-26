@@ -138,10 +138,68 @@ mc_filemanager_init_events (GError ** error)
     /* *INDENT-ON* */
 
     /* *INDENT-OFF* */
+    event_init_group_t core_group_events[] =
+    {
+        {"hotlist_add", mc_core_cmd_hotlist_add, NULL},
+        {"change_listing_mode", mc_core_cmd_change_listing_mode, NULL},
+        {"chmod", mc_core_cmd_chmod, NULL},
+        {"chown", mc_core_cmd_chown, NULL},
+        {"chown_advanced", mc_core_cmd_chown, NULL},
+        {"compare_dirs", mc_core_cmd_compare_dirs, NULL},
+        {"configuration_show_dialog", mc_core_cmd_configuration_show_dialog, NULL},
+        {"configuration_confirmations_show_dialog", mc_core_cmd_configuration_confirmations_show_dialog, NULL},
+        {"copy", mc_core_cmd_copy, NULL},
+        {"put_path_to_cmdline", mc_core_cmd_put_path_to_cmdline, NULL},
+        {"put_link_to_cmdline", mc_core_cmd_put_link_to_cmdline, NULL},
+        {"put_tagged_to_cmdline", mc_core_cmd_put_link_to_cmdline, NULL},
+        {"delete", mc_core_cmd_delete, NULL},
+        {"run_diffviewer", mc_core_cmd_run_diffviewer, NULL},
+        {"configuration_display_bits_show_dialog", mc_core_cmd_configuration_display_bits_show_dialog, NULL},
+        {"run_editor", mc_core_cmd_run_editor, NULL},
+        {"run_editor_internal", mc_core_cmd_run_editor, NULL},
+        {"extention_rules_file_edit", mc_core_cmd_extention_rules_file_edit, NULL},
+        {"file_highlight_rules_edit", mc_core_cmd_file_highlight_rules_edit, NULL},
+        {"user_menu_edit", mc_core_cmd_user_menu_edit, NULL},
+        {"symlink_edit", mc_core_cmd_symlink_edit, NULL},
+        {"external_panelize", mc_core_cmd_external_panelize, NULL},
+        {"panelize", mc_core_cmd_panelize, NULL},
+        {"filter", mc_core_cmd_filter, NULL},
+        {"view_filtered", mc_core_cmd_view_filtered, NULL},
+        {"find_file", mc_core_cmd_find_file, NULL},
+        {"help", mc_core_cmd_help, NULL},
+        {"panel_info", mc_core_cmd_panel_info, NULL},
+        {"configuration_layout_show_dialog", mc_core_cmd_configuration_layout_show_dialog, NULL},
+        {"configuration_appearance_show_dialog", mc_core_cmd_configuration_appearance_show_dialog, NULL},
+
+#ifdef ENABLE_VFS
+        {"configuration_vfs_show_dialog", mc_core_cmd_configuration_vfs_show_dialog, NULL},
+#endif /* ENABLE_VFS */
+#ifdef ENABLE_VFS_FISH
+        {"fish_connect_show_dialog", mc_core_cmd_fish_connect_show_dialog, NULL},
+#endif
+#ifdef ENABLE_VFS_FTP
+        {"ftp_connect_show_dialog", mc_core_cmd_ftp_connect_show_dialog, NULL},
+#endif
+#ifdef ENABLE_VFS_SFTP
+        {"sftp_connect_show_dialog", mc_core_cmd_sftp_connect_show_dialog, NULL},
+#endif
+#ifdef ENABLE_VFS_SMB
+        {"smb_connect_show_dialog", mc_core_cmd_smb_connect_show_dialog, NULL},
+#endif
+#ifdef ENABLE_BACKGROUND
+        {"show_background_jobs", mc_core_cmd_show_background_jobs, NULL},
+#endif
+
+        {NULL, NULL, NULL}
+    };
+    /* *INDENT-ON* */
+
+    /* *INDENT-OFF* */
     event_init_t standard_events[] =
     {
         {MCEVENT_GROUP_TREEVIEW, treeview_group_events},
         {MCEVENT_GROUP_FILEMANAGER, filemanager_group_events},
+        {MCEVENT_GROUP_CORE, core_group_events},
         {NULL, NULL}
     };
     /* *INDENT-ON* */
