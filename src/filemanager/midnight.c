@@ -1125,6 +1125,7 @@ midnight_execute_cmd (Widget * sender, unsigned long command)
 #endif
 #ifdef ENABLE_VFS_SMB
     case CK_ConnectSmb:
+        event_name = "smb_connect_show_dialog";
         break;
 #endif /* ENABLE_VFS_SMB */
     case CK_Panelize:
