@@ -158,10 +158,35 @@ gboolean mc_core_cmd_help (event_info_t * event_info, gpointer data, GError ** e
 gboolean mc_core_cmd_panel_info (event_info_t * event_info, gpointer data, GError ** error);
 
 #ifdef ENABLE_BACKGROUND
-gboolean mc_core_cmd_show_background_jobs (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_show_background_jobs (event_info_t * event_info, gpointer data,
+                                           GError ** error);
 #endif
-gboolean mc_core_cmd_configuration_layout_show_dialog (event_info_t * event_info, gpointer data, GError ** error);
-gboolean mc_core_cmd_configuration_appearance_show_dialog (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_configuration_layout_show_dialog (event_info_t * event_info, gpointer data,
+                                                       GError ** error);
+gboolean mc_core_cmd_configuration_appearance_show_dialog (event_info_t * event_info, gpointer data,
+                                                           GError ** error);
+gboolean mc_core_cmd_hard_link (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_sym_link_relative (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_sym_link_absolute (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_panel_listing (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_panel_listing_switch (event_info_t * event_info, gpointer data,
+                                           GError ** error);
+#ifdef LISTMODE_EDITOR
+gboolean mc_core_cmd_listmode (event_info_t * event_info, gpointer data, GError ** error);
+#endif
+gboolean mc_core_cmd_menu (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_menu_last_selected (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_mkdir (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_configuration_panel_show_dialog (event_info_t * event_info, gpointer data,
+                                                      GError ** error);
+#ifdef HAVE_CHARSET
+gboolean mc_core_cmd_select_encoding (event_info_t * event_info, gpointer data, GError ** error);
+#endif
+gboolean mc_core_cmd_quick_cd (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_hotlist (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_panel_quick_view (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_quiet_quit (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_core_cmd_quit (event_info_t * event_info, gpointer data, GError ** error);
 
 
 /*** inline functions ****************************************************************************/

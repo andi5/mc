@@ -59,7 +59,6 @@
 #include "src/subshell.h"
 #endif
 #include "src/setup.h"          /* variables */
-#include "src/learn.h"          /* learn_keys() */
 #include "src/keybind-defaults.h"
 #include "lib/keybind.h"
 #include "lib/event.h"
@@ -163,30 +162,6 @@ treebox_cmd (void)
         g_free (ret.s);
     }
 }
-
-/* --------------------------------------------------------------------------------------------- */
-
-#ifdef LISTMODE_EDITOR
-static void
-listmode_cmd (void)
-{
-    char *newmode;
-
-    if (get_current_type () != view_listing)
-        return;
-
-    newmode = listmode_edit (current_panel->user_format);
-    if (!newmode)
-        return;
-
-    g_free (current_panel->user_format);
-    current_panel->list_type = list_user;
-    current_panel->user_format = newmode;
-    set_panel_formats (current_panel);
-
-    do_refresh ();
-}
-#endif /* LISTMODE_EDITOR */
 
 /* --------------------------------------------------------------------------------------------- */
 
@@ -362,32 +337,6 @@ init_menu (void)
     right_menu = create_menu ("", create_panel_menu (), "[Left and Right Menus]");
     menubar_add_menu (the_menubar, right_menu);
     update_menu ();
-}
-
-/* --------------------------------------------------------------------------------------------- */
-
-static void
-menu_last_selected_cmd (void)
-{
-    the_menubar->is_active = TRUE;
-    the_menubar->is_dropped = (drop_menus != 0);
-    the_menubar->previous_widget = dlg_get_current_widget_id (midnight_dlg);
-    dlg_select_widget (the_menubar);
-}
-
-/* --------------------------------------------------------------------------------------------- */
-
-static void
-menu_cmd (void)
-{
-    if (the_menubar->is_active)
-        return;
-
-    if ((get_current_index () == 0) == (current_panel->active != 0))
-        the_menubar->selected = 0;
-    else
-        the_menubar->selected = g_list_length (the_menubar->menu) - 1;
-    menu_last_selected_cmd ();
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -951,14 +900,6 @@ quit_cmd_internal (int quiet)
 
 /* --------------------------------------------------------------------------------------------- */
 
-static gboolean
-quit_cmd (void)
-{
-    return quit_cmd_internal (0);
-}
-
-/* --------------------------------------------------------------------------------------------- */
-
 /**
  * Repaint the contents of the panels without frames.  To schedule panel
  * for repainting, set panel->dirty to 1.  There are many reasons why
@@ -1028,7 +969,7 @@ midnight_execute_cmd (Widget * sender, unsigned long command)
         break;
 #ifdef ENABLE_VFS
     case CK_OptionsVfs:
-        event_name = "configuration_vfs_dialog";
+        event_name = "configuration_vfs_show_dialog";
         break;
 #endif
     case CK_OptionsConfirm:
@@ -1153,56 +1094,53 @@ midnight_execute_cmd (Widget * sender, unsigned long command)
         event_name = "configuration_appearance_show_dialog";
         break;
     case CK_LearnKeys:
-        learn_keys ();
+        event_name = "configuration_learn_keys_show_dialog";
         break;
     case CK_Link:
-        link_cmd (LINK_HARDLINK);
+        event_name = "hard_link";
         break;
     case CK_PanelListing:
-        listing_cmd ();
+        event_name = "panel_listing";
         break;
 #ifdef LISTMODE_EDITOR
     case CK_ListMode:
-        listmode_cmd ();
+        event_name = "listmode";
         break;
 #endif
     case CK_Menu:
-        menu_cmd ();
+        event_name = "menu";
         break;
     case CK_MenuLastSelected:
-        menu_last_selected_cmd ();
+        event_name = "menu_last_selected";
         break;
     case CK_MakeDir:
-        mkdir_cmd ();
+        event_name = "mkdir";
         break;
     case CK_OptionsPanel:
-        panel_options_box ();
+        event_name = "configuration_panel_show_dialog";
         break;
 #ifdef HAVE_CHARSET
     case CK_SelectCodepage:
-        encoding_cmd ();
+        event_name = "select_encoding";
         break;
 #endif
     case CK_CdQuick:
-        quick_cd_cmd ();
+        event_name = "quick_cd";
         break;
     case CK_HotList:
-        hotlist_cmd ();
+        event_name = "hotlist";
         break;
     case CK_PanelQuickView:
-        if (sender == WIDGET (the_menubar))
-            quick_view_cmd ();  /* menu */
-        else
-            quick_cmd_no_menu ();       /* shortcut or buttonabr */
+        event_name = "panel_quick_view";
         break;
     case CK_QuitQuiet:
-        quiet_quit_cmd ();
+        event_name = "quiet_quit";
         break;
     case CK_Quit:
-        quit_cmd ();
+        event_name = "quit";
         break;
     case CK_LinkSymbolicRelative:
-        link_cmd (LINK_SYMLINK_RELATIVE);
+        event_name = "sym_link_relative";
         break;
     case CK_Move:
         rename_cmd ();
@@ -1243,10 +1181,10 @@ midnight_execute_cmd (Widget * sender, unsigned long command)
         swap_cmd ();
         break;
     case CK_LinkSymbolic:
-        link_cmd (LINK_SYMLINK_ABSOLUTE);
+        event_name = "sym_link_absolute";
         break;
     case CK_PanelListingSwitch:
-        toggle_listing_cmd ();
+        event_name = "panel_listing_switch";
         break;
     case CK_ShowHidden:
         toggle_show_hidden ();
@@ -1647,15 +1585,6 @@ save_cwds_stat (void)
 
 /* --------------------------------------------------------------------------------------------- */
 
-gboolean
-quiet_quit_cmd (void)
-{
-    print_last_revert = TRUE;
-    return quit_cmd_internal (1);
-}
-
-/* --------------------------------------------------------------------------------------------- */
-
 /** Run the main dialog that occupies the whole screen */
 gboolean
 do_nc (GError ** error)
@@ -1818,6 +1747,124 @@ mc_core_cmd_put_tagged_to_cmdline (event_info_t * event_info, gpointer data, GEr
         command_insert (cmdline, panel->dir.list[panel->selected].fname, TRUE);
     }
     input_enable_update (cmdline);
+
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+#ifdef LISTMODE_EDITOR
+/* event callback */
+
+gboolean
+mc_core_cmd_listmode (event_info_t * event_info, gpointer data, GError ** error)
+{
+    char *newmode;
+
+    (void) error;
+    (void) event_info;
+    (void) data;
+
+    if (get_current_type () != view_listing)
+        return TRUE;
+
+    newmode = listmode_edit (current_panel->user_format);
+    if (!newmode)
+        return TRUE;
+
+    g_free (current_panel->user_format);
+    current_panel->list_type = list_user;
+    current_panel->user_format = newmode;
+    set_panel_formats (current_panel);
+
+    do_refresh ();
+    return TRUE;
+}
+#endif /* LISTMODE_EDITOR */
+
+/* --------------------------------------------------------------------------------------------- */
+/* event callback */
+
+gboolean
+mc_core_cmd_menu (event_info_t * event_info, gpointer data, GError ** error)
+{
+    (void) error;
+    (void) event_info;
+    (void) data;
+
+    if (the_menubar->is_active)
+        return TRUE;
+
+    if ((get_current_index () == 0) == (current_panel->active != 0))
+        the_menubar->selected = 0;
+    else
+        the_menubar->selected = g_list_length (the_menubar->menu) - 1;
+
+    mc_event_raise (event_info->group_name, "menu_last_selected", NULL, event_info->ret, error);
+
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+/* event callback */
+
+gboolean
+mc_core_cmd_menu_last_selected (event_info_t * event_info, gpointer data, GError ** error)
+{
+    (void) error;
+    (void) event_info;
+    (void) data;
+
+    the_menubar->is_active = TRUE;
+    the_menubar->is_dropped = (drop_menus != 0);
+    the_menubar->previous_widget = dlg_get_current_widget_id (midnight_dlg);
+    dlg_select_widget (the_menubar);
+
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+/* event callback */
+
+gboolean
+mc_core_cmd_panel_quick_view (event_info_t * event_info, gpointer data, GError ** error)
+{
+    Widget *sender = (Widget *) data;
+
+    (void) error;
+    (void) event_info;
+
+    if (sender == WIDGET (the_menubar))
+        quick_view_cmd ();      /* menu */
+    else
+        quick_cmd_no_menu ();   /* shortcut or buttonabr */
+
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+/* event callback */
+
+gboolean
+mc_core_cmd_quiet_quit (event_info_t * event_info, gpointer data, GError ** error)
+{
+    (void) error;
+    (void) data;
+
+    print_last_revert = TRUE;
+    event_info->ret->b = quit_cmd_internal (1);
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+/* event callback */
+
+gboolean
+mc_core_cmd_quit (event_info_t * event_info, gpointer data, GError ** error)
+{
+    (void) error;
+    (void) data;
+
+    event_info->ret->b = quit_cmd_internal (0);
 
     return TRUE;
 }

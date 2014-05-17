@@ -170,6 +170,20 @@ mc_filemanager_init_events (GError ** error)
         {"panel_info", mc_core_cmd_panel_info, NULL},
         {"configuration_layout_show_dialog", mc_core_cmd_configuration_layout_show_dialog, NULL},
         {"configuration_appearance_show_dialog", mc_core_cmd_configuration_appearance_show_dialog, NULL},
+        {"hard_link", mc_core_cmd_hard_link, NULL},
+        {"sym_link_relative", mc_core_cmd_sym_link_relative, NULL},
+        {"sym_link_absolute", mc_core_cmd_sym_link_relative, NULL},
+        {"panel_listing", mc_core_cmd_panel_listing, NULL},
+        {"panel_listing_switch", mc_core_cmd_panel_listing_switch, NULL},
+        {"menu", mc_core_cmd_menu, NULL},
+        {"menu_last_selected", mc_core_cmd_menu_last_selected, NULL},
+        {"mkdir", mc_core_cmd_mkdir, NULL},
+        {"configuration_panel_show_dialog", mc_core_cmd_configuration_panel_show_dialog, NULL},
+        {"quick_cd", mc_core_cmd_quick_cd, NULL},
+        {"hotlist", mc_core_cmd_hotlist, NULL},
+        {"panel_quick_view", mc_core_cmd_panel_quick_view, NULL},
+        {"quiet_quit", mc_core_cmd_quiet_quit, NULL},
+        {"quit", mc_core_cmd_quit, NULL},
 
 #ifdef ENABLE_VFS
         {"configuration_vfs_show_dialog", mc_core_cmd_configuration_vfs_show_dialog, NULL},
@@ -188,6 +202,12 @@ mc_filemanager_init_events (GError ** error)
 #endif
 #ifdef ENABLE_BACKGROUND
         {"show_background_jobs", mc_core_cmd_show_background_jobs, NULL},
+#endif
+#ifdef LISTMODE_EDITOR
+        {"listmode", mc_core_cmd_listmode, NULL},
+#endif
+#ifdef HAVE_CHARSET
+        {"select_encoding", mc_core_cmd_select_encoding, NULL},
 #endif
 
         {NULL, NULL, NULL}

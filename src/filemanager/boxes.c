@@ -598,7 +598,8 @@ mc_core_cmd_configuration_show_dialog (event_info_t * event_info, gpointer data,
 /* event callback */
 
 gboolean
-mc_core_cmd_configuration_appearance_show_dialog (event_info_t * event_info, gpointer data, GError ** error)
+mc_core_cmd_configuration_appearance_show_dialog (event_info_t * event_info, gpointer data,
+                                                  GError ** error)
 {
     (void) error;
     (void) event_info;
@@ -641,11 +642,17 @@ mc_core_cmd_configuration_appearance_show_dialog (event_info_t * event_info, gpo
 }
 
 /* --------------------------------------------------------------------------------------------- */
+/* event callback */
 
-void
-panel_options_box (void)
+gboolean
+mc_core_cmd_configuration_panel_show_dialog (event_info_t * event_info, gpointer data,
+                                             GError ** error)
 {
     int simple_swap;
+
+    (void) error;
+    (void) event_info;
+    (void) data;
 
     simple_swap = mc_config_get_bool (mc_main_config, CONFIG_PANELS_SECTION,
                                       "simple_swap", FALSE) ? 1 : 0;
@@ -704,7 +711,7 @@ panel_options_box (void)
         };
 
         if (quick_dialog (&qdlg) != B_ENTER)
-            return;
+            return TRUE;
     }
 
     mc_config_set_bool (mc_main_config, CONFIG_PANELS_SECTION,
@@ -720,6 +727,8 @@ panel_options_box (void)
     }
 
     update_panels (UP_RELOAD, UP_KEEPSEL);
+
+    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- */

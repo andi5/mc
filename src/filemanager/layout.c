@@ -644,7 +644,8 @@ layout_change (void)
 /* event callback */
 
 gboolean
-mc_core_cmd_configuration_layout_show_dialog (event_info_t * event_info, gpointer data, GError ** error)
+mc_core_cmd_configuration_layout_show_dialog (event_info_t * event_info, gpointer data,
+                                              GError ** error)
 {
     WDialog *layout_dlg;
 

@@ -27,8 +27,6 @@
 
 #include "lib/global.h"
 
-#include "lib/event.h"
-
 #ifdef ENABLE_BACKGROUND
 #include "background.h"         /* (background_parent_call), background_parent_call_string() */
 #endif /* ENABLE_BACKGROUND */
@@ -66,6 +64,7 @@ events_init (GError ** error)
         {"clipboard_text_from_file", clipboard_text_from_file, NULL},
         {"help", help_interactive_display, NULL},
         {"suspend", execute_suspend, NULL},
+        {"configuration_learn_keys_show_dialog", mc_core_cmd_configuration_learn_keys_show_dialog, NULL},
 
 #ifdef ENABLE_BACKGROUND
         {"background_parent_call", background_parent_call, NULL},

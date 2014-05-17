@@ -115,6 +115,13 @@ enum CompareMode
     compare_quick, compare_size_only, compare_thourough
 };
 
+typedef enum
+{
+    LINK_HARDLINK = 0,
+    LINK_SYMLINK_ABSOLUTE,
+    LINK_SYMLINK_RELATIVE
+} link_type_t;
+
 /*** file scope variables ************************************************************************/
 
 #ifdef ENABLE_VFS_NET
@@ -991,12 +998,17 @@ mc_panel_cmd_rename_single (event_info_t * event_info, gpointer data, GError ** 
 }
 
 /* --------------------------------------------------------------------------------------------- */
+/* event callback */
 
-void
-mkdir_cmd (void)
+gboolean
+mc_core_cmd_mkdir (event_info_t * event_info, gpointer data, GError ** error)
 {
     char *dir;
     const char *name = "";
+
+    (void) error;
+    (void) event_info;
+    (void) data;
 
     /* If 'on' then automatically fills name with current selected item name */
     if (auto_fill_mkdir_name && !DIR_IS_DOTDOT (selection (current_panel)->fname))
@@ -1039,6 +1051,8 @@ mkdir_cmd (void)
         vfs_path_free (absdir);
     }
     g_free (dir);
+
+    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -1311,15 +1325,20 @@ mc_core_cmd_file_highlight_rules_edit (event_info_t * event_info, gpointer data,
 }
 
 /* --------------------------------------------------------------------------------------------- */
+/* event callback */
 
-void
-hotlist_cmd (void)
+gboolean
+mc_core_cmd_hotlist (event_info_t * event_info, gpointer data, GError ** error)
 {
     char *target;
 
+    (void) error;
+    (void) event_info;
+    (void) data;
+
     target = hotlist_show (LIST_HOTLIST);
     if (!target)
-        return;
+        return TRUE;
 
     if (get_current_type () == view_tree)
     {
@@ -1342,6 +1361,8 @@ hotlist_cmd (void)
         g_free (cmd);
     }
     g_free (target);
+
+    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -1465,14 +1486,57 @@ view_other_cmd (void)
 }
 
 /* --------------------------------------------------------------------------------------------- */
+/* event callback */
 
-void
-link_cmd (link_type_t link_type)
+gboolean
+mc_core_cmd_hard_link (event_info_t * event_info, gpointer data, GError ** error)
 {
     char *filename = selection (current_panel)->fname;
 
+    (void) error;
+    (void) event_info;
+    (void) data;
+
     if (filename != NULL)
-        do_link (link_type, filename);
+        do_link (LINK_HARDLINK, filename);
+
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+/* event callback */
+
+gboolean
+mc_core_cmd_sym_link_relative (event_info_t * event_info, gpointer data, GError ** error)
+{
+    char *filename = selection (current_panel)->fname;
+
+    (void) error;
+    (void) event_info;
+    (void) data;
+
+    if (filename != NULL)
+        do_link (LINK_SYMLINK_RELATIVE, filename);
+
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+/* event callback */
+
+gboolean
+mc_core_cmd_sym_link_absolute (event_info_t * event_info, gpointer data, GError ** error)
+{
+    char *filename = selection (current_panel)->fname;
+
+    (void) error;
+    (void) event_info;
+    (void) data;
+
+    if (filename != NULL)
+        do_link (LINK_SYMLINK_ABSOLUTE, filename);
+
+    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -1716,6 +1780,7 @@ mc_core_cmd_smb_connect_show_dialog (event_info_t * event_info, gpointer data, G
     (void) error;
     (void) event_info;
     (void) data;
+
     nice_cd (_("SMB link to machine"), _(machine_str),
              "[SMB File System]", ":smblink_cmd: SMB link to machine ", "smb://", 0, TRUE);
 
@@ -1736,11 +1801,16 @@ undelete_cmd (void)
 #endif /* ENABLE_VFS_UNDELFS */
 
 /* --------------------------------------------------------------------------------------------- */
+/* event callback */
 
-void
-quick_cd_cmd (void)
+gboolean
+mc_core_cmd_quick_cd (event_info_t * event_info, gpointer data, GError ** error)
 {
     char *p = cd_dialog ();
+
+    (void) error;
+    (void) event_info;
+    (void) data;
 
     if (p && *p)
     {
@@ -1750,6 +1820,8 @@ quick_cd_cmd (void)
         g_free (q);
     }
     g_free (p);
+
+    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -1908,11 +1980,17 @@ quick_cmd_no_menu (void)
 }
 
 /* --------------------------------------------------------------------------------------------- */
+/* event callback */
 
-void
-listing_cmd (void)
+gboolean
+mc_core_cmd_panel_listing (event_info_t * event_info, gpointer data, GError ** error)
 {
+    (void) error;
+    (void) event_info;
+    (void) data;
+
     switch_to_listing (MENU_PANEL_IDX);
+    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -1972,27 +2050,42 @@ quick_view_cmd (void)
 }
 
 /* --------------------------------------------------------------------------------------------- */
+/* event callback */
 
-void
-toggle_listing_cmd (void)
+gboolean
+mc_core_cmd_panel_listing_switch (event_info_t * event_info, gpointer data, GError ** error)
 {
     int current;
     WPanel *p;
+
+    (void) error;
+    (void) event_info;
+    (void) data;
+
 
     current = get_current_index ();
     p = PANEL (get_panel_widget (current));
 
     set_basic_panel_listing_to (current, (p->list_type + 1) % LIST_TYPES);
+
+    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- */
-
 #ifdef HAVE_CHARSET
-void
-encoding_cmd (void)
+/* event callback */
+
+gboolean
+mc_core_cmd_select_encoding (event_info_t * event_info, gpointer data, GError ** error)
 {
+    (void) error;
+    (void) event_info;
+    (void) data;
+
     if (SELECTED_IS_PANEL)
         mc_event_raise (MCEVENT_GROUP_FILEMANAGER, "select_codepage", MENU_PANEL, NULL, NULL);
+
+    return TRUE;
 }
 #endif
 
@@ -2007,10 +2100,10 @@ mc_core_cmd_panel_info (event_info_t * event_info, gpointer data, GError ** erro
     (void) error;
     (void) event_info;
 
-        if (sender == WIDGET (the_menubar))
-            info_cmd ();        /* menu */
-        else
-            info_cmd_no_menu ();        /* shortcut or buttonbar */
+    if (sender == WIDGET (the_menubar))
+        info_cmd ();            /* menu */
+    else
+        info_cmd_no_menu ();    /* shortcut or buttonbar */
 
     return TRUE;
 }
