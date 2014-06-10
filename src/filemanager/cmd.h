@@ -36,7 +36,6 @@ gboolean view_file_at_line (const vfs_path_t * filename_vpath, gboolean plain_vi
 gboolean view_file (const vfs_path_t * filename_vpath, gboolean normal, gboolean internal);
 void view_file_cmd (void);
 void edit_file_at_line (const vfs_path_t * what_vpath, gboolean internal, long start_line);
-void rename_cmd (void);
 void reread_cmd (void);
 void vfs_list (void);
 void panel_tree_cmd (void);

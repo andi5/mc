@@ -154,7 +154,7 @@ gboolean mc_core_cmd_sftp_connect_show_dialog (event_info_t * event_info, gpoint
 gboolean mc_core_cmd_smb_connect_show_dialog (event_info_t * event_info, gpointer data,
                                               GError ** error);
 #endif
-gboolean mc_core_cmd_help (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_panel_cmd_help (event_info_t * event_info, gpointer data, GError ** error);
 gboolean mc_core_cmd_panel_info (event_info_t * event_info, gpointer data, GError ** error);
 
 #ifdef ENABLE_BACKGROUND
@@ -187,6 +187,7 @@ gboolean mc_core_cmd_hotlist (event_info_t * event_info, gpointer data, GError *
 gboolean mc_core_cmd_panel_quick_view (event_info_t * event_info, gpointer data, GError ** error);
 gboolean mc_core_cmd_quiet_quit (event_info_t * event_info, gpointer data, GError ** error);
 gboolean mc_core_cmd_quit (event_info_t * event_info, gpointer data, GError ** error);
+gboolean mc_panel_cmd_rename (event_info_t * event_info, gpointer data, GError ** error);
 
 
 /*** inline functions ****************************************************************************/

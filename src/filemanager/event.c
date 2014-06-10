@@ -82,6 +82,7 @@ mc_filemanager_init_events (GError ** error)
         {"save_current_file_to_clip_file", mc_panel_cmd_save_current_file_to_clip_file, NULL},
         {"chdir_other", mc_panel_cmd_chdir_other, NULL},
         {"chdir_other_if_link", mc_panel_cmd_chdir_other_if_link, NULL},
+        {"rename", mc_panel_cmd_rename, NULL},
         {"copy_single", mc_panel_cmd_copy_single, NULL},
         {"delete_single", mc_panel_cmd_delete_single, NULL},
         {"enter", mc_panel_cmd_enter, NULL},
@@ -128,6 +129,7 @@ mc_filemanager_init_events (GError ** error)
         {"sort_by_extension", mc_panel_cmd_sort_order_next, NULL},
         {"sort_by_size", mc_panel_cmd_sort_order_next, NULL},
         {"sort_by_mtime", mc_panel_cmd_sort_order_next, NULL},
+        {"help", mc_panel_cmd_help, NULL},
 
 #ifdef HAVE_CHARSET
         {"select_codepage", mc_panel_cmd_select_codepage, NULL},
@@ -166,7 +168,6 @@ mc_filemanager_init_events (GError ** error)
         {"filter", mc_core_cmd_filter, NULL},
         {"view_filtered", mc_core_cmd_view_filtered, NULL},
         {"find_file", mc_core_cmd_find_file, NULL},
-        {"help", mc_core_cmd_help, NULL},
         {"panel_info", mc_core_cmd_panel_info, NULL},
         {"configuration_layout_show_dialog", mc_core_cmd_configuration_layout_show_dialog, NULL},
         {"configuration_appearance_show_dialog", mc_core_cmd_configuration_appearance_show_dialog, NULL},

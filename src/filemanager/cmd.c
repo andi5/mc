@@ -940,17 +940,25 @@ mc_core_cmd_copy (event_info_t * event_info, gpointer data, GError ** error)
 }
 
 /* --------------------------------------------------------------------------------------------- */
+/* event callback */
 /** Invoked by F6.  Move/rename, default to the other panel, ignore marks.  */
 
-void
-rename_cmd (void)
+gboolean
+mc_panel_cmd_rename (event_info_t * event_info, gpointer data, GError ** error)
 {
+    WPanel *panel = (WPanel *) data;
+
+    (void) error;
+    (void) event_info;
+
     save_cwds_stat ();
-    if (panel_operate (current_panel, OP_MOVE, FALSE))
+    if (panel_operate (panel, OP_MOVE, FALSE))
     {
         update_panels (UP_OPTIMIZE, UP_KEEPSEL);
         repaint_screen ();
     }
+
+    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -1614,7 +1622,7 @@ mc_core_cmd_symlink_edit (event_info_t * event_info, gpointer data, GError ** er
 /* event callback */
 
 gboolean
-mc_core_cmd_help (event_info_t * event_info, gpointer data, GError ** error)
+mc_panel_cmd_help (event_info_t * event_info, gpointer data, GError ** error)
 {
     ev_help_t event_data = { NULL, NULL };
 

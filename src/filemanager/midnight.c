@@ -1073,6 +1073,7 @@ midnight_execute_cmd (Widget * sender, unsigned long command)
         event_name = "panelize";
         break;
     case CK_Help:
+        event_group_name = MCEVENT_GROUP_FILEMANAGER;
         event_name = "help";
         break;
     case CK_History:
@@ -1143,7 +1144,9 @@ midnight_execute_cmd (Widget * sender, unsigned long command)
         event_name = "sym_link_relative";
         break;
     case CK_Move:
-        rename_cmd ();
+        event_data = current_panel;
+        event_group_name = MCEVENT_GROUP_FILEMANAGER;
+        event_name = "rename";
         break;
     case CK_Reread:
         reread_cmd ();
